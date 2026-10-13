@@ -1,0 +1,29 @@
+# 1. Core Framework & Agent Engine
+langchain>=0.3.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+langgraph>=0.2.0
+
+# 2. 100% Free Cloud LLM Providers
+langchain-groq>=0.2.0
+langchain-openai>=0.2.0
+openai>=1.50.0
+
+# 3. Vector Database & Keyword Search
+langchain-chroma>=0.1.4
+chromadb>=0.5.0
+rank-bm25>=0.2.2
+
+# 4. Document Ingestion & Environment
+pypdf>=5.0.0
+python-dotenv>=1.0.0
+tiktoken>=0.7.0
+
+# 5. Observability & Tracing
+langfuse>=2.0.0
+
+# 6. Production API & Testing
+fastapi>=0.115.0
+uvicorn>=0.30.0
+pytest>=8.0.0
+requests>=2.31.0

@@ -1,0 +1,24 @@
+# Virtual environment
+venv/
+.venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+
+# Secrets & API keys (CRITICAL)
+.env
+.env.local
+
+# Local vector database storage
+.chroma/
+chroma_db/
+*.sqlite3
+
+# Testing & logs
+.pytest_cache/
+*.log
+
+# Frontend (React + Vite)
+frontend/node_modules/
+frontend/dist/

@@ -1,0 +1,82 @@
+[
+  {
+    "id": "TC001",
+    "question": "What Windows kernel driver file caused the CrowdStrike global outage?",
+    "ground_truth": "The Windows kernel driver CSAgent.sys, CrowdStrike's file system filter driver, caused the global outage. It registers with Windows to receive real-time security notifications and crashed due to an out-of-bounds memory read.",
+    "source_document": "crowdstrike_outage_2024.pdf",
+    "category": "root_cause",
+    "difficulty": "easy"
+  },
+  {
+    "id": "TC002",
+    "question": "What was the exact logic flaw that caused the CrowdStrike content interpreter to crash?",
+    "ground_truth": "The Content Validator validated 21 inputs but the Content Interpreter was only provided 20 values. When the interpreter attempted to access the 21st value it performed an out-of-bounds memory read beyond the end of the input data array, causing a system crash (bugcheck 0x50 PAGE_FAULT_IN_NONPAGED_AREA).",
+    "source_document": "crowdstrike_outage_2024.pdf",
+    "category": "root_cause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "TC003",
+    "question": "What was CrowdStrike's primary mitigation step to stop the global BSOD outage?",
+    "ground_truth": "CrowdStrike reverted the problematic Channel File 291 update and deployed a remediated version. For already-affected hosts, the workaround was to boot into Safe Mode or WinRE and manually delete the C-00000291*.sys file from the CrowdStrike directory.",
+    "source_document": "crowdstrike_outage_2024.pdf",
+    "category": "mitigation",
+    "difficulty": "medium"
+  },
+  {
+    "id": "TC004",
+    "question": "What is AS33154 and what role did it play in the Cloudflare BGP route leak?",
+    "ground_truth": "AS33154 is DQE Communications, an ISP in Northern Pennsylvania. DQE was using a BGP optimizer that generated highly specific routes. These routes were announced to Allegheny Technologies (AS396531) and then passed to Verizon (AS701), which failed to filter them and propagated them to the global internet, causing traffic for Cloudflare, Amazon, and Linode to be misdirected through DQE's network.",
+    "source_document": "cloudflare_bgp_leak.md",
+    "category": "root_cause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "TC005",
+    "question": "What percentage of Cloudflare's global traffic was lost at peak during the BGP route leak?",
+    "ground_truth": "Cloudflare lost approximately 15% of its global traffic at the peak of the BGP route leak incident.",
+    "source_document": "cloudflare_bgp_leak.md",
+    "category": "impact",
+    "difficulty": "easy"
+  },
+  {
+    "id": "TC006",
+    "question": "Why did Verizon's failure to filter BGP routes make the Cloudflare outage so severe?",
+    "ground_truth": "Because specific routes override general routes in BGP, once Verizon propagated DQE's highly specific routes to the global internet, all traffic for affected prefixes was rerouted through DQE and Allegheny, networks that were not equipped to handle the sudden traffic volume. This caused widespread service degradation for Cloudflare and other affected services.",
+    "source_document": "cloudflare_bgp_leak.md",
+    "category": "root_cause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "TC007",
+    "question": "What caused the GitHub MySQL primary database to diverge from its replicas?",
+    "ground_truth": "A network partition isolated the primary data center. Orchestrator nodes in the US West Coast and US East Coast cloud established a Raft consensus quorum and initiated failover, directing writes to new West Coast primaries. When connectivity was restored, the application tier immediately directed writes to the new primaries while the original primary had continued receiving writes during isolation, causing 954 writes on one busy cluster to go unreplicated and creating a split-brain divergence.",
+    "source_document": "github_mysql_failover.md",
+    "category": "root_cause",
+    "difficulty": "hard"
+  },
+  {
+    "id": "TC008",
+    "question": "How did the GitHub team resolve the MySQL replication lag after the failover?",
+    "ground_truth": "The team provisioned additional MySQL read replicas in the US East Coast public cloud to spread read request volume across more replicas. This reduced aggregate utilization on each replica, allowing replication to catch up and converge to a consistent state. Replication delays were initially increasing rather than decreasing before this intervention.",
+    "source_document": "github_mysql_failover.md",
+    "category": "mitigation",
+    "difficulty": "medium"
+  },
+  {
+    "id": "TC009",
+    "question": "What operating system limit caused the AWS Kinesis front-end fleet to fail?",
+    "ground_truth": "The Kinesis front-end fleet exceeded the configured maximum user processes limit (nproc) for the operating system. Each front-end server maintained peer-to-peer threads with every other server to synchronize shard maps. As the fleet grew past a threshold, the total number of required OS threads exceeded the nproc limit, preventing new worker threads from being spawned and causing health check failures.",
+    "source_document": "aws_kinesis_outage.md",
+    "category": "root_cause",
+    "difficulty": "medium"
+  },
+  {
+    "id": "TC010",
+    "question": "Which AWS services were impacted downstream when Kinesis front-end servers failed?",
+    "ground_truth": "The downstream AWS services impacted by the Kinesis front-end failure included Amazon CloudWatch (metric ingestion delays and alarm delays), Amazon Cognito (user authentication degradation), AWS Lambda (invocation delays), AWS IoT, and parts of the AWS Management Console.",
+    "source_document": "aws_kinesis_outage.md",
+    "category": "impact",
+    "difficulty": "medium"
+  }
+]
