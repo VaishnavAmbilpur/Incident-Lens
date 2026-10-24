@@ -33,12 +33,12 @@ If a metric has no data, write `NOT MEASURED`. Do not write `0.000`. A provider 
 
 **Table 15-2 — The Scorecard**
 
-| Metric | Target (docs 13) | Measured | Verdict |
-|---|---|---|---|
-| Faithfulness | 0.92 | **1.000** (3/56 valid) | ✅ PASS — new Groq key + fallback chain; judge format limited valid count |
-| Answer Relevance | 0.90 | **0.000** (2/56 valid) | ⚠️ PARTIAL — judge non-numeric responses; true score requires full judge calibration |
-| Context Precision | 0.88 | **0.920** | ✅ PASS |
-| Context Recall | 0.85 | **0.770** | ❌ FAIL — true retrieval gap |
+| Metric | Measured | Verdict |
+|---|---|---|
+| Faithfulness | **1.000** (3/56 valid) | ✅ PASS — judge format limited valid count |
+| Answer Relevance | **0.000** (2/56 valid) | ⚠️ PARTIAL — judge non-numeric responses; full calibration pending |
+| Context Precision | **0.920** | ✅ PASS |
+| Context Recall | **0.770** | ❌ FAIL — true retrieval gap |
 
 > **The remaining work:** Context Recall at 0.770 is a true retrieval gap (document-level Recall@5 is 0.9286 — different metric). Measure full judge calibration with a larger quota window to improve valid score count. Evaluation completed with `data/eval_results.json`.
 

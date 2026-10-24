@@ -43,14 +43,14 @@ The ablation table isolates the contribution of each technique. Every number is 
 
 ## Quality Scorecard
 
-| Metric | Target | Measured | Status |
-|---|---|---|---|
-| **Context Precision** | ≥ 88% | **0.920** | ✅ PASS |
-| **Context Recall** | ≥ 85% | **0.770** | ❌ FAIL — real retrieval gap |
-| **Faithfulness** | ≥ 92% | Pre-fix: 0.950 | ⏳ Pending re-measurement |
-| **Answer Relevance** | ≥ 90% | Pre-fix: 0.950 | ⏳ Pending re-measurement |
+| Metric | Measured | Status |
+|---|---|---|
+| **Context Precision** | **0.920** | ✅ PASS |
+| **Context Recall** | **0.770** | ❌ FAIL — real retrieval gap |
+| **Faithfulness** | 0.950 (pre-fix; pending re-run) | ⏳ Not re-measured |
+| **Answer Relevance** | 0.950 (pre-fix; pending re-run) | ⏳ Not re-measured |
 
-> **Honest reporting:** The first Context Precision measurement was 0.600. This was a measurement artifact — the judge saw only 200 chars of an 800-char chunk. With the full chunk, the correct value is 0.920. The correction is documented publicly in [docs/15_evals.md](./docs/15_evals.md).
+> **Honest reporting:** The first Context Precision measurement was 0.600 — a measurement artifact (judge saw only 200 of 800 chars per chunk). Corrected value with full chunks: 0.920. Full correction documented in [docs/15_evals.md](./docs/15_evals.md).
 
 ---
 
