@@ -1,0 +1,979 @@
+{
+  "model": {
+    "model": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "max_pair_tokens": 512,
+    "cache_dir": "C:\\Users\\Vaishnav Ambilpur\\Desktop\\Applied Ai\\Production-Level-RAG\\models",
+    "device": "cpu",
+    "num_labels": 1
+  },
+  "by_variant": {
+    "hybrid RRF (stage 6)": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8571428571428571,
+        "ndcg": 0.725838064956706,
+        "mrr": 0.6919642857142857,
+        "misses": 4
+      }
+    },
+    "rerank 10 replace": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.804418536224494,
+        "mrr": 0.7738095238095238,
+        "misses": 3
+      }
+    },
+    "rerank 10 hybrid": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.8135586452838898,
+        "mrr": 0.786904761904762,
+        "misses": 3
+      }
+    },
+    "rerank 20 replace": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.739866252839362,
+        "mrr": 0.6926020408163265,
+        "misses": 3
+      }
+    },
+    "rerank 20 hybrid": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.8003775650542989,
+        "mrr": 0.7741496598639456,
+        "misses": 3
+      }
+    },
+    "rerank 30 replace": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.7266851726097713,
+        "mrr": 0.6747448979591837,
+        "misses": 3
+      }
+    },
+    "rerank 30 hybrid": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.804418536224494,
+        "mrr": 0.7789115646258503,
+        "misses": 3
+      }
+    },
+    "rerank 50 replace": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8571428571428571,
+        "ndcg": 0.6994759044975243,
+        "mrr": 0.65625,
+        "misses": 4
+      }
+    },
+    "rerank 50 hybrid": {
+      "literal": {
+        "questions": 28,
+        "recall": 1.0,
+        "ndcg": 0.9868189197704093,
+        "mrr": 0.9821428571428571,
+        "misses": 0
+      },
+      "paraphrase": {
+        "questions": 28,
+        "recall": 0.8928571428571429,
+        "ndcg": 0.804418536224494,
+        "mrr": 0.7789115646258503,
+        "misses": 3
+      }
+    }
+  },
+  "reports": [
+    {
+      "name": "hybrid RRF (stage 6)",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.7678571428571429,
+          "3": 0.9107142857142857,
+          "5": 0.9285714285714286,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.7678571428571429,
+          "3": 0.9107142857142857,
+          "5": 0.9285714285714286,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.7678571428571429,
+          "3": 0.30357142857142855,
+          "5": 0.1866071428571429,
+          "10": 0.09955357142857144
+        },
+        "ndcg": {
+          "1": 0.7678571428571429,
+          "3": 0.8486378395408184,
+          "5": 0.8563284923635576,
+          "10": 0.8683226363616603
+        }
+      },
+      "mrr": 0.8370535714285714,
+      "mean_latency_ms": 22.02868750048635,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "gocardless-2017-10-10",
+            "aws-sydney-power-2012",
+            "cf-2026-02-20",
+            "datadog-2020-09-24",
+            "slack-2021-01-04"
+          ],
+          "miss": true,
+          "latency_ms": 23.4,
+          "category": "capacity"
+        },
+        {
+          "qid": "q22b",
+          "question": "A disk failed and the automatic promotion of a standby did not happen, so both a payment interface and its management screen stopped. Which company reported this?",
+          "gold_document": "gocardless-2017-10-10",
+          "rank": 8,
+          "retrieved_top5": [
+            "aws-us-east-power-2012",
+            "cf-2023-10-30",
+            "azure-storage-2014",
+            "cf-2025-11-18",
+            "gcp-gcve-2025"
+          ],
+          "miss": true,
+          "latency_ms": 24.7,
+          "category": "database"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cf-2023-01-24",
+            "cloudflare_bgp_leak",
+            "slack-2022-02-22",
+            "cf-2026-02-20",
+            "cf-2024-06-20"
+          ],
+          "miss": true,
+          "latency_ms": 24.2,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 6,
+          "retrieved_top5": [
+            "aws-eu-west-power-2011",
+            "gcp-gcve-2025",
+            "cf-2025-02-06",
+            "cf-dashboard-2020",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 19.4,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 10 replace",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.8214285714285714,
+          "3": 0.9464285714285714,
+          "5": 0.9464285714285714,
+          "10": 0.9464285714285714
+        },
+        "recall": {
+          "1": 0.8214285714285714,
+          "3": 0.9464285714285714,
+          "5": 0.9464285714285714,
+          "10": 0.9464285714285714
+        },
+        "precision": {
+          "1": 0.8214285714285714,
+          "3": 0.38690476190476186,
+          "5": 0.3196428571428571,
+          "10": 0.3081420068027211
+        },
+        "ndcg": {
+          "1": 0.8214285714285714,
+          "3": 0.8956187279974516,
+          "5": 0.8956187279974516,
+          "10": 0.8956187279974516
+        }
+      },
+      "mrr": 0.8779761904761905,
+      "mean_latency_ms": 336.9652357162392,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "datadog-2020-09-24",
+            "gocardless-2017-10-10",
+            "slack-2021-01-04",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 274.8,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2024-06-20",
+            "cf-2025-02-06",
+            "cf-2026-02-20",
+            "cf-2023-01-24"
+          ],
+          "miss": true,
+          "latency_ms": 315.5,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": null,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "gcp-gcve-2025",
+            "aws-eu-west-power-2011",
+            "cf-dashboard-2020"
+          ],
+          "miss": true,
+          "latency_ms": 347.8,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 10 hybrid",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.8392857142857143,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9464285714285714
+        },
+        "recall": {
+          "1": 0.8392857142857143,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9464285714285714
+        },
+        "precision": {
+          "1": 0.8392857142857143,
+          "3": 0.38095238095238093,
+          "5": 0.3196428571428571,
+          "10": 0.3081420068027211
+        },
+        "ndcg": {
+          "1": 0.8392857142857143,
+          "3": 0.8932806966836756,
+          "5": 0.9001887825271495,
+          "10": 0.9001887825271495
+        }
+      },
+      "mrr": 0.8845238095238095,
+      "mean_latency_ms": 419.7581017870107,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "datadog-2020-09-24",
+            "gocardless-2017-10-10",
+            "cf-2026-02-20",
+            "slack-2021-01-04"
+          ],
+          "miss": true,
+          "latency_ms": 406.9,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2023-01-24",
+            "cf-2024-06-20",
+            "cf-2026-02-20",
+            "cf-2025-02-06"
+          ],
+          "miss": true,
+          "latency_ms": 465.0,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-eu-west-power-2011",
+            "cf-2025-02-06",
+            "gcp-gcve-2025",
+            "cf-dashboard-2020"
+          ],
+          "miss": true,
+          "latency_ms": 411.7,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 20 replace",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.75,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.75,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.75,
+          "3": 0.32440476190476186,
+          "5": 0.2172619047619048,
+          "10": 0.16612811791383222
+        },
+        "ndcg": {
+          "1": 0.75,
+          "3": 0.8556519334821465,
+          "5": 0.8633425863048857,
+          "10": 0.8692949672572665
+        }
+      },
+      "mrr": 0.8373724489795918,
+      "mean_latency_ms": 817.1231017882486,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "datadog-2020-09-24",
+            "gocardless-2017-10-10",
+            "honeycomb-2023-07-25",
+            "cf-2024-06-20"
+          ],
+          "miss": true,
+          "latency_ms": 855.4,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2024-06-20",
+            "cf-2025-02-06",
+            "cf-2025-11-18",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 795.1,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 7,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "cf-2023-10-30",
+            "cf-2026-02-20",
+            "gcp-gcve-2025",
+            "datadog-2020-09-24"
+          ],
+          "miss": true,
+          "latency_ms": 757.4,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 20 hybrid",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.8214285714285714,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.8214285714285714,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.8214285714285714,
+          "3": 0.32440476190476186,
+          "5": 0.2172619047619048,
+          "10": 0.16612811791383222
+        },
+        "ndcg": {
+          "1": 0.8214285714285714,
+          "3": 0.8866901565688802,
+          "5": 0.8935982424123541,
+          "10": 0.8995506233647351
+        }
+      },
+      "mrr": 0.8781462585034013,
+      "mean_latency_ms": 820.2560767760068,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "datadog-2020-09-24",
+            "gocardless-2017-10-10",
+            "honeycomb-2023-07-25",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 712.3,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2024-06-20",
+            "cf-2023-01-24",
+            "cf-2025-02-06",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 771.0,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 7,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "aws-eu-west-power-2011",
+            "gcp-gcve-2025",
+            "cf-2026-02-20",
+            "cf-2023-10-30"
+          ],
+          "miss": true,
+          "latency_ms": 820.0,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 30 replace",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.7321428571428571,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.7321428571428571,
+          "3": 0.9285714285714286,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.7321428571428571,
+          "3": 0.3095238095238095,
+          "5": 0.1910714285714286,
+          "10": 0.1123937074829932
+        },
+        "ndcg": {
+          "1": 0.7321428571428571,
+          "3": 0.8490613933673511,
+          "5": 0.8567520461900903,
+          "10": 0.8627044271424712
+        }
+      },
+      "mrr": 0.8284438775510204,
+      "mean_latency_ms": 1284.3444428529308,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "gocardless-2017-10-10",
+            "datadog-2020-09-24",
+            "honeycomb-2023-07-25",
+            "github_mysql_failover"
+          ],
+          "miss": true,
+          "latency_ms": 1158.3,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2024-06-20",
+            "cf-2025-02-06",
+            "cf-2025-11-18",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 1348.3,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 7,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "cf-2023-10-30",
+            "cf-2026-02-20",
+            "gcp-gcve-2025",
+            "datadog-2020-09-24"
+          ],
+          "miss": true,
+          "latency_ms": 1156.0,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 30 hybrid",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.8214285714285714,
+          "3": 0.9464285714285714,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.8214285714285714,
+          "3": 0.9464285714285714,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.8214285714285714,
+          "3": 0.3154761904761904,
+          "5": 0.1910714285714286,
+          "10": 0.1123937074829932
+        },
+        "ndcg": {
+          "1": 0.8214285714285714,
+          "3": 0.8956187279974516,
+          "5": 0.8956187279974516,
+          "10": 0.9015711089498326
+        }
+      },
+      "mrr": 0.8805272108843537,
+      "mean_latency_ms": 1480.2700482125927,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "datadog-2020-09-24",
+            "gocardless-2017-10-10",
+            "honeycomb-2023-07-25",
+            "cf-2024-06-20"
+          ],
+          "miss": true,
+          "latency_ms": 1327.7,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2024-06-20",
+            "cf-2023-01-24",
+            "cf-2025-02-06",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 1520.2,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 7,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "aws-eu-west-power-2011",
+            "gcp-gcve-2025",
+            "cf-2026-02-20",
+            "cf-2023-10-30"
+          ],
+          "miss": true,
+          "latency_ms": 1477.5,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 50 replace",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.7321428571428571,
+          "3": 0.9107142857142857,
+          "5": 0.9285714285714286,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.7321428571428571,
+          "3": 0.9107142857142857,
+          "5": 0.9285714285714286,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.7321428571428571,
+          "3": 0.30357142857142855,
+          "5": 0.1866071428571429,
+          "10": 0.09955357142857144
+        },
+        "ndcg": {
+          "1": 0.7321428571428571,
+          "3": 0.8354567593112276,
+          "5": 0.8431474121339668,
+          "10": 0.8551415561320695
+        }
+      },
+      "mrr": 0.8191964285714286,
+      "mean_latency_ms": 2370.727496426428,
+      "misses": [
+        {
+          "qid": "q14b",
+          "question": "A gap in measurement data made a system apply rules far too widely and cut off access to machine details, which stopped every virtual machine operation for almost six hours. Which company reported this?",
+          "gold_document": "github-2026-02",
+          "rank": 6,
+          "retrieved_top5": [
+            "honeycomb-2023-07-25",
+            "crowdstrike_outage_2024",
+            "datadog-2020-09-24",
+            "aws-us-east-power-2012",
+            "cf-2023-10-04-dns"
+          ],
+          "miss": true,
+          "latency_ms": 2671.3,
+          "category": "config"
+        },
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "datadog-2020-09-24",
+            "aws-sydney-power-2012",
+            "gocardless-2017-10-10",
+            "honeycomb-2023-07-25",
+            "github_mysql_failover"
+          ],
+          "miss": true,
+          "latency_ms": 2504.6,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2025-11-18",
+            "cf-2024-06-20",
+            "cf-2025-02-06",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 2642.2,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 8,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "cf-2023-10-30",
+            "cf-2023-01-24",
+            "cf-2026-02-20",
+            "gcp-gcve-2025"
+          ],
+          "miss": true,
+          "latency_ms": 1829.6,
+          "category": "config"
+        }
+      ]
+    },
+    {
+      "name": "rerank 50 hybrid",
+      "questions": 56,
+      "k_values": [
+        1,
+        3,
+        5,
+        10
+      ],
+      "metrics": {
+        "hit": {
+          "1": 0.8214285714285714,
+          "3": 0.9464285714285714,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "recall": {
+          "1": 0.8214285714285714,
+          "3": 0.9464285714285714,
+          "5": 0.9464285714285714,
+          "10": 0.9642857142857143
+        },
+        "precision": {
+          "1": 0.8214285714285714,
+          "3": 0.3154761904761904,
+          "5": 0.19017857142857145,
+          "10": 0.09955357142857144
+        },
+        "ndcg": {
+          "1": 0.8214285714285714,
+          "3": 0.8956187279974516,
+          "5": 0.8956187279974516,
+          "10": 0.9015711089498326
+        }
+      },
+      "mrr": 0.8805272108843537,
+      "mean_latency_ms": 2073.187505353417,
+      "misses": [
+        {
+          "qid": "q18b",
+          "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+          "gold_document": "slack-2022-02-22",
+          "rank": null,
+          "retrieved_top5": [
+            "aws-sydney-power-2012",
+            "datadog-2020-09-24",
+            "gocardless-2017-10-10",
+            "honeycomb-2023-07-25",
+            "cf-2024-06-20"
+          ],
+          "miss": true,
+          "latency_ms": 1836.9,
+          "category": "capacity"
+        },
+        {
+          "qid": "q23b",
+          "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+          "gold_document": "slack-2021-01-04",
+          "rank": null,
+          "retrieved_top5": [
+            "cloudflare_bgp_leak",
+            "cf-2024-06-20",
+            "cf-2025-02-06",
+            "cf-2023-01-24",
+            "cf-2026-02-20"
+          ],
+          "miss": true,
+          "latency_ms": 2149.0,
+          "category": "network"
+        },
+        {
+          "qid": "q28b",
+          "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+          "gold_document": "azure-storage-2014",
+          "rank": 7,
+          "retrieved_top5": [
+            "cf-2025-02-06",
+            "aws-eu-west-power-2011",
+            "gcp-gcve-2025",
+            "cf-2026-02-20",
+            "cf-2023-10-30"
+          ],
+          "miss": true,
+          "latency_ms": 1773.7,
+          "category": "config"
+        }
+      ]
+    }
+  ]
+}

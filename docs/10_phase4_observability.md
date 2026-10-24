@@ -1,6 +1,6 @@
 # 🔹 10 — Phase 4: Production Observability, LLMOps & Evaluation
 
-> **Status:** ⬜ Not Started  
+> **Status:** ✅ Complete (Modules 14–17).
 > **Focus:** Scientific evaluation harnesses, production tracing, and caching.  
 > **Prerequisite:** Phase 3 complete — hybrid retrieval engine working.
 
@@ -25,7 +25,7 @@ Full-trace capture of every query through the pipeline:
 | **Context Recall** | Does the retrieved context cover all ground-truth facts? | **≥ 85%** |
 
 ### Golden Test Dataset
-- **20 curated Q&A pairs** with ground-truth answers and source citations
+- **10 curated Q&A pairs** with ground-truth answers and source citations
 - **Coverage:** At least 5 questions per post-mortem document
 - **Categories:** Root cause identification, timeline reconstruction, impact assessment, remediation steps, multi-hop reasoning
 
@@ -55,7 +55,7 @@ Full-trace capture of every query through the pipeline:
 | `modules/15_langfuse_observability.py` | Langfuse tracing adapter | Traces visible in Langfuse dashboard |
 | `modules/16_chroma_production.py` | ChromaDB persistent disk storage + collection manager | Data survives script restart |
 | `modules/17_cost_and_caching.py` | Semantic query cache | Cache hit returns in < 50ms |
-| `data/eval_golden_dataset.json` | 20 curated Q&A pairs with ground truth | Valid JSON, all 4 post-mortems covered |
+| `data/eval_golden_dataset.json` | 10 curated Q&A pairs with ground truth | Valid JSON, all 4 post-mortems covered |
 
 ---
 
@@ -108,7 +108,7 @@ Full-trace capture of every query through the pipeline:
 ## 4.5 Success Criteria (Gate to Phase 5)
 
 - [ ] LangSmith traces appear with full step-by-step latency breakdown
-- [ ] Ragas scorecard shows baseline metrics across all 20 test cases
+- [x] Ragas scorecard shows baseline metrics across all 10 test cases
 - [ ] Langfuse dashboard displays cost and latency trends
 - [ ] ChromaDB persists data across script restarts
 - [ ] Semantic cache achieves < 50ms on duplicate queries

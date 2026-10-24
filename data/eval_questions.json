@@ -1,0 +1,466 @@
+{
+  "version": "2.0",
+  "purpose": "Labelled retrieval questions for IncidentLens. Each question has exactly ONE correct document in the corpus. The answer_anchor is a phrase that must appear in the correct document, so the label is verifiable.",
+  "corpus_size_at_creation": 31,
+  "version_note": "Version 1 used the SAME words as the anchor phrase. BM25 then scored 1.000 on every metric, and no technique could show a gain. The measurement was blind, exactly like the old saturated corpus. Version 2 uses two kinds of question so the retrievers separate.",
+  "rules": [
+    "One gold document for each question. No question has two answers.",
+    "The answer_anchor is a phrase from the gold document, verified before the question was written.",
+    "A question must not hold the answer_anchor word for word, unless its variant is declared 'literal'.",
+    "Every document must have at least one 'paraphrase' question. A paraphrase question is the hard case."
+  ],
+  "variants": {
+    "literal": "The question holds the exact term. BM25 has the advantage.",
+    "paraphrase": "The question uses different words. Dense retrieval has the advantage. This is the realistic case, because a real engineer does not know the wording of the report."
+  },
+  "questions": [
+    {
+      "qid": "q01a",
+      "question": "Which Cloudflare service answers DNS queries and returned SERVFAIL responses on 4 October 2023?",
+      "gold_document": "cf-2023-10-04-dns",
+      "answer_anchor": "SERVFAIL",
+      "variant": "literal",
+      "category": "dns"
+    },
+    {
+      "qid": "q01b",
+      "question": "Cloudflare customers received failure answers instead of addresses for websites they knew existed during an autumn 2023 resolver event. What broke?",
+      "gold_document": "cf-2023-10-04-dns",
+      "answer_anchor": "SERVFAIL",
+      "variant": "paraphrase",
+      "category": "dns"
+    },
+    {
+      "qid": "q02a",
+      "question": "What kind of Lua exception caused HTTP 500 errors for customers who had the Cloudflare Managed Ruleset deployed?",
+      "gold_document": "cf-2025-12-05",
+      "answer_anchor": "Lua exception",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q02b",
+      "question": "A small scripting fault in a rules engine returned server errors to a large group of web customers in December 2025. Which team published the explanation?",
+      "gold_document": "cf-2025-12-05",
+      "answer_anchor": "Lua exception",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q03a",
+      "question": "Which Cloudflare system produced an oversized feature file used by the Bot Management system?",
+      "gold_document": "cf-2025-11-18",
+      "answer_anchor": "feature file",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q03b",
+      "question": "A permissions change in a database made a file grow past a software limit, and that file then spread across a whole global network in November 2025. What is this incident?",
+      "gold_document": "cf-2025-11-18",
+      "answer_anchor": "feature file",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q04a",
+      "question": "Which automated Cloudflare cleanup task removed customer BYOIP prefixes by mistake?",
+      "gold_document": "cf-2026-02-20",
+      "answer_anchor": "BYOIP",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q04b",
+      "question": "Customers who advertise their own internet address blocks lost those routes in early 2026 because a tidy-up routine called an interface the wrong way. Which report covers this?",
+      "gold_document": "cf-2026-02-20",
+      "answer_anchor": "BYOIP",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q05a",
+      "question": "Which Cloudflare R2 service was disabled by mistake during an abuse remediation for a phishing report?",
+      "gold_document": "cf-2025-02-06",
+      "answer_anchor": "R2 Gateway",
+      "variant": "literal",
+      "category": "human-error"
+    },
+    {
+      "qid": "q05b",
+      "question": "An operator meant to block one bad web address but blocked a whole product instead, with poor guard rails in the internal tool. Which incident is this?",
+      "gold_document": "cf-2025-02-06",
+      "answer_anchor": "R2 Gateway",
+      "variant": "paraphrase",
+      "category": "human-error"
+    },
+    {
+      "qid": "q06a",
+      "question": "Which command line parameter was omitted when the R2 team deployed new storage credentials to the wrong environment?",
+      "gold_document": "cf-2025-03-21",
+      "answer_anchor": "--env",
+      "variant": "literal",
+      "category": "human-error"
+    },
+    {
+      "qid": "q06b",
+      "question": "A team rotated secrets but sent them to a test system instead of the live one, so a gateway failed to authenticate. Which incident is this?",
+      "gold_document": "cf-2025-03-21",
+      "answer_anchor": "--env",
+      "variant": "paraphrase",
+      "category": "human-error"
+    },
+    {
+      "qid": "q07a",
+      "question": "Which flaw in cookie validation logic made Cloudflare request handler processes enter an infinite loop?",
+      "gold_document": "cf-2024-06-20",
+      "answer_anchor": "infinite loop",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q07b",
+      "question": "A new denial-of-service defence exposed a latent fault, and request handlers burned all their processor capacity in a repeating cycle across many sites. Which incident is this?",
+      "gold_document": "cf-2024-06-20",
+      "answer_anchor": "infinite loop",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q08a",
+      "question": "Which Cloudflare deployment tool returned a staging build identifier to a production request?",
+      "gold_document": "cf-2023-10-30",
+      "answer_anchor": "staging build",
+      "variant": "literal",
+      "category": "deploy"
+    },
+    {
+      "qid": "q08b",
+      "question": "Traffic was sent to an unauthorised address and answered with an authentication failure, because a release tool picked the wrong build version. Which incident is this?",
+      "gold_document": "cf-2023-10-30",
+      "answer_anchor": "staging build",
+      "variant": "paraphrase",
+      "category": "deploy"
+    },
+    {
+      "qid": "q09a",
+      "question": "Which React hook caused excessive API calls and took down the Cloudflare Tenant Service dashboard?",
+      "gold_document": "cf-dashboard-2020",
+      "answer_anchor": "dependency array",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q09b",
+      "question": "A user interface component called a backend far too often because of a mistake in its render inputs, and the load spread to other services. Which incident is this?",
+      "gold_document": "cf-dashboard-2020",
+      "answer_anchor": "dependency array",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q10a",
+      "question": "How many minutes were Cloudflare services unavailable on 24 January 2023 because of an error releasing service token code?",
+      "gold_document": "cf-2023-01-24",
+      "answer_anchor": "121 minutes",
+      "variant": "literal",
+      "category": "deploy"
+    },
+    {
+      "qid": "q10b",
+      "question": "A mistake while shipping code that manages access credentials degraded a wide group of products for about two hours in early 2023. Which incident is this?",
+      "gold_document": "cf-2023-01-24",
+      "answer_anchor": "121 minutes",
+      "variant": "paraphrase",
+      "category": "deploy"
+    },
+    {
+      "qid": "q11",
+      "question": "What did Meta blame for taking down its global backbone network on 4 October 2021?",
+      "gold_document": "meta-2021-10-04",
+      "answer_anchor": "backbone",
+      "variant": "literal",
+      "category": "network"
+    },
+    {
+      "qid": "q11b",
+      "question": "Every service vanished for one company, and even the internal tools that staff use to fix problems stopped working, because a command disabled the network that connects its own centres. Which company reported this?",
+      "gold_document": "meta-2021-10-04",
+      "answer_anchor": "backbone",
+      "variant": "paraphrase",
+      "category": "network"
+    },
+    {
+      "qid": "q12",
+      "question": "Which manifest bug restarted only the authoritative nameserver and made GitHub return NXDOMAIN for many records?",
+      "gold_document": "github-2014-01-16-dns",
+      "answer_anchor": "Puppet",
+      "variant": "literal",
+      "category": "dns"
+    },
+    {
+      "qid": "q12b",
+      "question": "A configuration management fault restarted one of two name servers, and the repair attempt then built a broken zone from a service that itself needed naming to work. Which company reported this?",
+      "gold_document": "github-2014-01-16-dns",
+      "answer_anchor": "Puppet",
+      "variant": "paraphrase",
+      "category": "dns"
+    },
+    {
+      "qid": "q13",
+      "question": "Which GitHub database endpoint became inaccessible after a configuration change broke routing-service health-check pings?",
+      "gold_document": "github-2024-08",
+      "answer_anchor": "read-only",
+      "variant": "literal",
+      "category": "config"
+    },
+    {
+      "qid": "q13b",
+      "question": "A change stopped machines from answering a monitoring probe, so the system marked them unfit and reading the site became impossible for over half an hour. Which company reported this?",
+      "gold_document": "github-2024-08",
+      "answer_anchor": "read-only",
+      "variant": "paraphrase",
+      "category": "config"
+    },
+    {
+      "qid": "q14",
+      "question": "Which loss cascaded and caused security policies to block access to critical VM metadata on GitHub?",
+      "gold_document": "github-2026-02",
+      "answer_anchor": "telemetry",
+      "variant": "literal",
+      "category": "config"
+    },
+    {
+      "qid": "q14b",
+      "question": "A gap in measurement data made a system apply rules far too widely and cut off access to machine details, which stopped every virtual machine operation for almost six hours. Which company reported this?",
+      "gold_document": "github-2026-02",
+      "answer_anchor": "telemetry",
+      "variant": "paraphrase",
+      "category": "config"
+    },
+    {
+      "qid": "q15",
+      "question": "What was the name of the user request that Postgres devoured, forcing Sentry down for most of a working day?",
+      "gold_document": "sentry-2015-07-20",
+      "answer_anchor": "Transaction ID Wraparound",
+      "variant": "literal",
+      "category": "database"
+    },
+    {
+      "qid": "q15b",
+      "question": "A counter inside a relational database reached its maximum value and the storage engine stopped accepting writes. Which company reported this?",
+      "gold_document": "sentry-2015-07-20",
+      "answer_anchor": "Transaction ID Wraparound",
+      "variant": "paraphrase",
+      "category": "database"
+    },
+    {
+      "qid": "q16",
+      "question": "What was the name of the unhandled condition in the async workers queue that crashed the incident.io application?",
+      "gold_document": "incidentio-2022-11-18",
+      "answer_anchor": "poison pill",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q16b",
+      "question": "One bad message in a background job queue made a Go application crash again and again, and the hosting platform made the search for the cause harder. Which company reported this?",
+      "gold_document": "incidentio-2022-11-18",
+      "answer_anchor": "poison pill",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q17",
+      "question": "Which internal system failed at Datadog and caused a global infrastructure connectivity issue?",
+      "gold_document": "datadog-2020-09-24",
+      "answer_anchor": "service discovery",
+      "variant": "literal",
+      "category": "config"
+    },
+    {
+      "qid": "q17b",
+      "question": "A bad entry in the registry that tells programs where to find each other spread everywhere when one client went down. Which company reported this?",
+      "gold_document": "datadog-2020-09-24",
+      "answer_anchor": "service discovery",
+      "variant": "paraphrase",
+      "category": "config"
+    },
+    {
+      "qid": "q18",
+      "question": "Which cache nodes at Slack were removed and overloaded the vitness cluster?",
+      "gold_document": "slack-2022-02-22",
+      "answer_anchor": "vitness",
+      "variant": "literal",
+      "category": "capacity"
+    },
+    {
+      "qid": "q18b",
+      "question": "Taking away memory servers pushed too much work onto a remaining cluster and the service went down. Which company reported this?",
+      "gold_document": "slack-2022-02-22",
+      "answer_anchor": "vitness",
+      "variant": "paraphrase",
+      "category": "capacity"
+    },
+    {
+      "qid": "q19",
+      "question": "Which kernel driver file caused the CrowdStrike global outage and the memory bugcheck 0x00000050?",
+      "gold_document": "crowdstrike_outage_2024",
+      "answer_anchor": "CSAgent",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q19b",
+      "question": "A security product shipped a bad content update that made computers worldwide show a blue screen and stop working. Which company reported this?",
+      "gold_document": "crowdstrike_outage_2024",
+      "answer_anchor": "CSAgent",
+      "variant": "paraphrase",
+      "category": "software"
+    },
+    {
+      "qid": "q20",
+      "question": "Which power equipment failed in a way that stopped backup generators from starting during an AWS EU West event?",
+      "gold_document": "aws-eu-west-power-2011",
+      "answer_anchor": "generator",
+      "variant": "literal",
+      "category": "power"
+    },
+    {
+      "qid": "q20b",
+      "question": "A transformer fault and a controller that checks power phase prevented reserve power from arriving, and a cloud region lost many virtual machines. Which company reported this?",
+      "gold_document": "aws-eu-west-power-2011",
+      "answer_anchor": "generator",
+      "variant": "paraphrase",
+      "category": "power"
+    },
+    {
+      "qid": "q21",
+      "question": "What caused the Cloudflare BGP route leak that involved a Verizon route and a BGP optimizer?",
+      "gold_document": "cloudflare_bgp_leak",
+      "answer_anchor": "BGP Optimizer",
+      "variant": "literal",
+      "category": "network"
+    },
+    {
+      "qid": "q21b",
+      "question": "A routing mistake at one network spread through another and made a large part of the internet unreachable for a short period. Which company reported this?",
+      "gold_document": "cloudflare_bgp_leak",
+      "answer_anchor": "BGP Optimizer",
+      "variant": "paraphrase",
+      "category": "network"
+    },
+    {
+      "qid": "q22",
+      "question": "Which incident report describes a hardware failure on a primary database node that stopped cluster automation from promoting a replica?",
+      "gold_document": "gocardless-2017-10-10",
+      "answer_anchor": "primary database node",
+      "variant": "literal",
+      "category": "database"
+    },
+    {
+      "qid": "q22b",
+      "question": "A disk failed and the automatic promotion of a standby did not happen, so both a payment interface and its management screen stopped. Which company reported this?",
+      "gold_document": "gocardless-2017-10-10",
+      "answer_anchor": "primary database node",
+      "variant": "paraphrase",
+      "category": "database"
+    },
+    {
+      "qid": "q23",
+      "question": "Which incident report describes network saturation in AWS traffic gateways that caused packet loss for a chat product?",
+      "gold_document": "slack-2021-01-04",
+      "answer_anchor": "packet loss",
+      "variant": "literal",
+      "category": "network"
+    },
+    {
+      "qid": "q23b",
+      "question": "Too much traffic through a cloud gateway dropped data on the wire, and an attempt to add capacity made matters worse. Which company reported this?",
+      "gold_document": "slack-2021-01-04",
+      "answer_anchor": "packet loss",
+      "variant": "paraphrase",
+      "category": "network"
+    },
+    {
+      "qid": "q24",
+      "question": "Which incident report describes an AWS Kinesis disruption in the Northern Virginia region on 25 November 2020?",
+      "gold_document": "aws_kinesis_outage",
+      "answer_anchor": "Kinesis",
+      "variant": "literal",
+      "category": "capacity"
+    },
+    {
+      "qid": "q24b",
+      "question": "A stream processing service could not accept data because internal threads were exhausted, and the event rippled into other cloud services in one region. Which company reported this?",
+      "gold_document": "aws_kinesis_outage",
+      "answer_anchor": "Kinesis",
+      "variant": "paraphrase",
+      "category": "capacity"
+    },
+    {
+      "qid": "q26",
+      "question": "Which incident report describes a MySQL replication topology that only listed a subset of servers after a failure?",
+      "gold_document": "github_mysql_failover",
+      "answer_anchor": "replication topology",
+      "variant": "literal",
+      "category": "database"
+    },
+    {
+      "qid": "q26b",
+      "question": "A network split made two halves of a database believe each was in charge, and the tool that manages the cluster showed an incomplete picture. Which company reported this?",
+      "gold_document": "github_mysql_failover",
+      "answer_anchor": "replication topology",
+      "variant": "paraphrase",
+      "category": "database"
+    },
+    {
+      "qid": "q27",
+      "question": "Which incident report describes a Google Cloud VMware Engine resource that was deleted automatically at the end of a fixed term contract?",
+      "gold_document": "gcp-gcve-2025",
+      "answer_anchor": "fixed term",
+      "variant": "literal",
+      "category": "config"
+    },
+    {
+      "qid": "q27b",
+      "question": "A private cloud was set up with an old option, and the automatic end of its rental period destroyed customer workloads sooner than expected. Which company reported this?",
+      "gold_document": "gcp-gcve-2025",
+      "answer_anchor": "fixed term",
+      "variant": "paraphrase",
+      "category": "config"
+    },
+    {
+      "qid": "q28",
+      "question": "Which incident report describes an Azure storage service interruption that began in November 2014?",
+      "gold_document": "azure-storage-2014",
+      "answer_anchor": "storage service interruption",
+      "variant": "literal",
+      "category": "config"
+    },
+    {
+      "qid": "q28b",
+      "question": "A configuration slip in one region made a cloud object store unavailable for many hours. Which company published the update?",
+      "gold_document": "azure-storage-2014",
+      "answer_anchor": "storage service interruption",
+      "variant": "paraphrase",
+      "category": "config"
+    },
+    {
+      "qid": "q29",
+      "question": "Which incident report describes a Honeycomb total outage that stopped all data being processed?",
+      "gold_document": "honeycomb-2023-07-25",
+      "answer_anchor": "total Honeycomb outage",
+      "variant": "literal",
+      "category": "software"
+    },
+    {
+      "qid": "q29b",
+      "question": "An observability vendor went completely dark for just over an hour in July 2023. Which company reported this?",
+      "gold_document": "honeycomb-2023-07-25",
+      "answer_anchor": "total Honeycomb outage",
+      "variant": "paraphrase",
+      "category": "software"
+    }
+  ]
+}

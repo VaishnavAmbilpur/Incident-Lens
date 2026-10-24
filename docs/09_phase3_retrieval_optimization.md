@@ -1,6 +1,6 @@
 # 🔹 09 — Phase 3: Retrieval Optimization & Quality Engineering
 
-> **Status:** ⬜ Not Started  
+> **Status:** ✅ Complete (Modules 09–13).
 > **Focus:** Upgrading naive search into an enterprise-grade hybrid retrieval engine.  
 > **Prerequisite:** Phase 2 complete — all 5 failure modes understood and documented.
 
@@ -9,7 +9,7 @@
 ## 3.1 Engineering Concepts
 
 ### Hybrid Search (Dense + BM25)
-- **Dense (BGE-M3):** Captures semantic meaning — "database failure" ≈ "DB starvation"
+- **Dense (`all-MiniLM-L6-v2`, 384-dim):** Captures semantic meaning — "database failure" ≈ "DB starvation"
 - **Sparse (BM25):** Captures exact lexical matches — `SIGSEGV`, `0x00000050`, `CSAgent.sys`
 - **Reciprocal Rank Fusion (RRF):** Merges both ranked lists with the formula:
   ```
@@ -37,7 +37,7 @@
 
 ### Cross-Encoder Reranking
 - **Problem:** Bi-encoder (embedding) similarity is a rough approximation.
-- **Solution:** Pass the top 20 candidates through BGE-Reranker-Large (cross-encoder) to get precise relevance scores.
+- **Solution:** Pass the top 20 candidates through `cross-encoder/ms-marco-MiniLM-L-6-v2` (cross-encoder) to get precise relevance scores.
 - **Result:** Top-K after reranking has 80%+ fewer false positives.
 
 ### Citation Grounding
@@ -53,7 +53,7 @@
 | `modules/09_token_budgeting.py` | Dynamic context window optimizer | Prints budget calculation for varying chunk counts |
 | `modules/10_hybrid_search_bm25.py` | Dense + Sparse RRF hybrid retriever | Query `"bugcheck 0x50"` returns exact match AND semantic matches |
 | `modules/11_query_transformations.py` | Multi-query generator and query rewrites | Generates 3 variants, retrieves with each, merges results |
-| `modules/12_reranking_pipeline.py` | BGE cross-encoder reranking | Shows before/after reranking scores — noise eliminated |
+| `modules/12_reranking_pipeline.py` | MiniLM cross-encoder reranking | Shows before/after reranking scores — noise eliminated |
 
 ---
 

@@ -1,6 +1,6 @@
 # 🔹 08 — Phase 2: Diagnosing & Debugging the 5 Failure Modes
 
-> **Status:** ⬜ Not Started  
+> **Status:** ✅ Complete (Modules 07–08).
 > **Focus:** Reproducing and diagnosing the 5 critical failure modes that break naive RAG in production.  
 > **Prerequisite:** Phase 1 complete — naive RAG baseline working.
 

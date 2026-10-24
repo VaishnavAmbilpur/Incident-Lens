@@ -16,7 +16,7 @@ graph TD
     end
 
     subgraph Storage_Indexing["Storage & Indexing"]
-        D1 --> E1[("ChromaDB Persistent Store (BGE-M3 Dense)")]
+        D1 --> E1[("ChromaDB Persistent Store (all-MiniLM-L6-v2 Dense)")]
         D1 --> E2["BM25 Inverted Index (Sparse)"]
         D1 --> E3[("NetworkX / GraphRAG (Failure Chains)")]
     end
@@ -28,7 +28,7 @@ graph TD
         F2 --> G2["Sparse Keyword Search (BM25)"]
         G1 --> H1["Reciprocal Rank Fusion (RRF)"]
         G2 --> H1
-        H1 --> H2["BGE Cross-Encoder Reranker"]
+        H1 --> H2["MiniLM Cross-Encoder Reranker"]
         H2 --> H3["Token Budgeting & Smart Truncation"]
     end
 
@@ -45,7 +45,7 @@ graph TD
     subgraph Observability_LLMOps["Observability, LLMOps & Evaluation"]
         J1 --> K1["LangSmith Real-Time Tracing"]
         J1 --> K2["Langfuse Self-Hosted Tracing"]
-        K1 --> L1["Ragas Golden Eval Harness (20 Test Cases)"]
+        K1 --> L1["Ragas Golden Eval Harness (10 Test Cases)"]
         K2 --> L1
         L1 --> L2["Dashboard: Faithfulness, Precision, Recall"]
     end
@@ -61,7 +61,7 @@ sequenceDiagram
     actor Engineer as On-Call SRE Engineer
     participant Guard as Security Guardrail
     participant Agent as LangGraph Agentic Core
-    participant Search as Hybrid Engine (BGE-M3 + BM25)
+    participant Search as Hybrid Engine (MiniLM + BM25)
     participant LLM as Llama 3.3 / DeepSeek-R1
     participant Observability as Langfuse / LangSmith
 

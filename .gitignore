@@ -1,24 +1,63 @@
-# Virtual environment
-venv/
-.venv/
-
-# Python cache files
-__pycache__/
-*.pyc
-
-# Secrets & API keys (CRITICAL)
+# ===============================================================
+# Secrets. CRITICAL. Never commit these files.
+# ===============================================================
 .env
 .env.local
+.env.*.local
 
-# Local vector database storage
-.chroma/
-chroma_db/
-*.sqlite3
-
-# Testing & logs
+# ===============================================================
+# Python
+# ===============================================================
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ===============================================================
+# Model and tokenizer cache
+# About 90 MB for the embedding model. It is downloaded, not authored.
+# ===============================================================
+.cache/
+models/
+
+# ===============================================================
+# Vector index and runtime databases
+# These are BUILD OUTPUTS. They are rebuilt from data/postmortems/.
+# A committed index hides a stale state and makes the repository large.
+# ===============================================================
+data/chroma_db/
+data/*.sqlite
+data/*.sqlite-*
+*.db
+*.db-*
+
+# ===============================================================
+# Evaluation output
+# The numbers are recorded in docs/15_evals.md. The raw files are a
+# run artifact and they change on every measurement.
+# ===============================================================
+data/eval_results.json
+data/index_report.json
+data/embedding_report.json
+data/chunk_report.json
+data/ingest_report.json
+logs/
 *.log
 
-# Frontend (React + Vite)
+# ===============================================================
+# Frontend
+# ===============================================================
 frontend/node_modules/
 frontend/dist/
+frontend/.vite/
+
+# ===============================================================
+# Operating system
+# ===============================================================
+.DS_Store
+Thumbs.db
+desktop.ini

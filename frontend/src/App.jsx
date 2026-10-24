@@ -1,390 +1,466 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "sonner";
-import { BarChart3, Gauge, HeartPulse, MessageSquare, WifiOff } from "lucide-react";
+import { useState } from "react";
 
-import { Toaster } from "@/components/ui/sonner";
-import { Badge } from "@/components/ui/badge";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
-import { TooltipProvider } from "@/components/ui/tooltip";
+const API_BASE = "";
 
-import { Header } from "@/components/header";
-import { QueryPanel } from "@/components/query-panel";
-import { AgentTrace } from "@/components/agent-trace";
-import { AnswerCard } from "@/components/answer-card";
-import { EvaluationPanel } from "@/components/evaluation-panel";
-import { MetricsPanel } from "@/components/metrics-panel";
-import { HealthPanel, OfflineNotice } from "@/components/health-panel";
-
-import { useHealth } from "@/hooks/useHealth";
-import {
-  API_BASE,
-  ApiError,
-  fetchMetrics,
-  parsePrometheus,
-  postEvaluate,
-  postQuery,
-  streamQuery,
-} from "@/lib/api";
-import { applyTheme, getStoredTheme, persistTheme } from "@/lib/theme";
-import { cn } from "@/lib/utils";
-
-const TABS = [
-  { value: "ask", label: "Ask", icon: MessageSquare },
-  { value: "evaluate", label: "Evaluate", icon: Gauge },
-  { value: "metrics", label: "Metrics", icon: BarChart3 },
-  { value: "health", label: "Health", icon: HeartPulse },
+const STAGES = [
+  { id: 1, label: "1 · Ingest", subtitle: "Read the corpus" },
+  { id: 2, label: "2 · Chunk", subtitle: "Split into chunks" },
+  { id: 3, label: "3 · Embed", subtitle: "Vectorize query" },
+  { id: 4, label: "4 · Index", subtitle: "Search vector store" },
+  { id: 5, label: "5 · Retrieve", subtitle: "Dense + BM25 (before rerank)" },
+  { id: 6, label: "6 · Fuse", subtitle: "RRF merge" },
+  { id: 7, label: "7 · Rerank", subtitle: "Cross-encoder (after rerank)" },
+  { id: 8, label: "8 · Contextualize", subtitle: "Context preamble" },
+  { id: 9, label: "9 · Generate", subtitle: "Answer with citations" },
+  { id: 10, label: "10 · Evaluate", subtitle: "Faithfulness + relevance" },
 ];
 
-/** Human message for any thrown error, preferring the backend's own wording. */
-function describeError(error) {
-  if (error instanceof ApiError) {
-    if (error.isNetworkError) return error.message;
-    const suffix = error.requestId ? ` (request ${error.requestId})` : "";
-    return `${error.message}${suffix}`;
-  }
-  return error?.message || String(error);
+const STATUS_COLORS = {
+  ok: "#22c55e",
+  skipped: "#f59e0b",
+  error: "#ef4444",
+  idle: "#94a3b8",
+  running: "#3b82f6",
+};
+
+function escapeHtml(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function truncate(text, len = 200) {
+  if (!text) return "";
+  text = String(text).trim();
+  if (text.length <= len) return text;
+  return text.slice(0, len) + "…";
 }
 
 export default function App() {
-  /* ---------------- theme (dark-first, persisted) ---------------- */
-  const [theme, setTheme] = useState(() => getStoredTheme());
-
-  useEffect(() => {
-    applyTheme(theme);
-    persistTheme(theme);
-  }, [theme]);
-
-  const toggleTheme = useCallback(() => {
-    setTheme((current) => (current === "dark" ? "light" : "dark"));
-  }, []);
-
-  /* ---------------- health drives the whole shell ---------------- */
-  const health = useHealth();
-  const isOffline = health.isOffline;
-
-  const [activeTab, setActiveTab] = useState("ask");
-
-  /* ---------------- Ask state ---------------- */
   const [question, setQuestion] = useState("");
-  const [threadId, setThreadId] = useState("");
-  const [useStream, setUseStream] = useState(true);
-  const [trace, setTrace] = useState([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const [result, setResult] = useState(null); // full POST /query payload
-  const [streamPartial, setStreamPartial] = useState(null); // answer frame from SSE
-  const [askError, setAskError] = useState(null);
-  const abortRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState(null);
+  const [error, setError] = useState(null);
 
-  // The stream is "live" while a request is in flight; that flags the trailing trace node.
-  const traceEntries = useMemo(
-    () =>
-      trace.map((entry, index) => ({
-        ...entry,
-        live: isRunning && index === trace.length - 1,
-      })),
-    [trace, isRunning]
-  );
-
-  const resetRun = useCallback(() => {
-    setTrace([]);
-    setResult(null);
-    setStreamPartial(null);
-    setAskError(null);
-  }, []);
-
-  const handleAsk = useCallback(async () => {
-    const trimmed = question.trim();
-    if (!trimmed || isRunning) return;
-
-    resetRun();
-    setIsRunning(true);
-
-    // An empty thread_id means "new conversation": the server mints one and we adopt it.
-    const body = threadId.trim() ? { question: trimmed, thread_id: threadId.trim() } : { question: trimmed };
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!question.trim()) return;
+    setLoading(true);
+    setError(null);
+    setResponse(null);
     try {
-      if (useStream) {
-        let answerFrame = null;
-        await streamQuery(body, {
-          signal: controller.signal,
-          onEvent: (event) => {
-            switch (event.event) {
-              case "start":
-                if (event.thread_id) setThreadId(event.thread_id);
-                break;
-              case "node":
-                setTrace((prev) => [
-                  ...prev,
-                  { node: event.node, steps: Array.isArray(event.steps) ? event.steps : [] },
-                ]);
-                break;
-              case "answer":
-                answerFrame = {
-                  answer: event.answer || "",
-                  blocked: Boolean(event.blocked),
-                  citations: Array.isArray(event.citations) ? event.citations : [],
-                  latency_ms: event.latency_ms,
-                  thread_id: event.thread_id,
-                };
-                setStreamPartial(answerFrame);
-                if (event.thread_id) setThreadId(event.thread_id);
-                break;
-              case "error":
-                setAskError(new ApiError({ message: event.message, type: event.type }));
-                break;
-              case "done":
-                break;
-              default:
-                break;
-            }
-          },
-        });
-
-        if (!answerFrame) {
-          // The stream ended without an answer frame: say so instead of showing a blank card.
-          setAskError(
-            new ApiError({
-              message: "The stream ended before the answer frame arrived.",
-              type: "stream_incomplete",
-            })
-          );
-        }
-      } else {
-        const payload = await postQuery(body, { signal: controller.signal });
-        if (payload.thread_id) setThreadId(payload.thread_id);
-        setResult(payload);
-        if (payload.blocked) {
-          toast.warning("Blocked by the security gate", {
-            description: "No LLM calls were made for this query.",
-          });
-        }
+      const url = `${API_BASE}/query`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, top_k: 5 }),
+      });
+      if (!res.ok) {
+        throw new Error(
+          `Server error ${res.status} on ${url}. ` +
+            `If the UI loaded but this fails: 1) hard-refresh (Ctrl+Shift+R) to clear a cached bundle, ` +
+            `2) check Firefox proxy settings — add localhost,127.0.0.1 to "No proxy for", ` +
+            `3) confirm the backend is running (python api/server.py).`
+        );
       }
-    } catch (error) {
-      if (error?.name === "AbortError") {
-        toast.info("Query cancelled");
-      } else {
-        setAskError(error);
-        toast.error("Query failed", { description: describeError(error) });
-      }
+      const data = await res.json();
+      setResponse(data);
+    } catch (err) {
+      setError(err.message);
     } finally {
-      setIsRunning(false);
-      abortRef.current = null;
+      setLoading(false);
     }
-  }, [question, threadId, useStream, isRunning, resetRun]);
+  };
 
-  const handleCancel = useCallback(() => {
-    abortRef.current?.abort();
-    setIsRunning(false);
-  }, []);
-
-  /* ---------------- Evaluate state ---------------- */
-  const [evalLimit, setEvalLimit] = useState(1);
-  const [evalResult, setEvalResult] = useState(null);
-  const [isEvaluating, setIsEvaluating] = useState(false);
-  const evalAbortRef = useRef(null);
-
-  const handleEvaluate = useCallback(async () => {
-    if (isEvaluating) return;
-    setIsEvaluating(true);
-    setEvalResult(null);
-    const controller = new AbortController();
-    evalAbortRef.current = controller;
-    try {
-      const payload = await postEvaluate(evalLimit, { signal: controller.signal });
-      setEvalResult(payload);
-      if (payload.complete === false || payload.judge_failures > 0) {
-        toast.warning("Incomplete scorecard", {
-          description: `${payload.judge_failures} judge call(s) failed.`,
-        });
-      } else {
-        toast.success("Evaluation complete");
-      }
-    } catch (error) {
-      if (error?.name === "AbortError") {
-        toast.info("Evaluation cancelled");
-      } else {
-        toast.error("Evaluation failed", { description: describeError(error) });
-      }
-    } finally {
-      setIsEvaluating(false);
-      evalAbortRef.current = null;
-    }
-  }, [evalLimit, isEvaluating]);
-
-  /* ---------------- Metrics state ---------------- */
-  const [metricsRaw, setMetricsRaw] = useState("");
-  const [metricsError, setMetricsError] = useState(null);
-  const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
-  const metricsAbortRef = useRef(null);
-
-  const loadMetrics = useCallback(async () => {
-    metricsAbortRef.current?.abort();
-    const controller = new AbortController();
-    metricsAbortRef.current = controller;
-    setIsLoadingMetrics(true);
-    try {
-      const text = await fetchMetrics({ signal: controller.signal });
-      setMetricsRaw(text);
-      setMetricsError(null);
-    } catch (error) {
-      if (error?.name !== "AbortError") {
-        setMetricsError(error);
-        setMetricsRaw("");
-      }
-    } finally {
-      setIsLoadingMetrics(false);
-    }
-  }, []);
-
-  // Fetch when the Metrics tab is opened, not on every render of the shell.
-  useEffect(() => {
-    if (activeTab === "metrics") loadMetrics();
-  }, [activeTab, loadMetrics]);
-
-  const parsedMetrics = useMemo(() => parsePrometheus(metricsRaw), [metricsRaw]);
-
-  // Abort anything in flight if the app unmounts.
-  useEffect(
-    () => () => {
-      abortRef.current?.abort();
-      evalAbortRef.current?.abort();
-      metricsAbortRef.current?.abort();
-    },
-    []
-  );
-
-  const offlineNote =
-    "The API is unreachable, so this action is disabled. Start it and re-check the status pill.";
+  const stageColor = (status) => STATUS_COLORS[status] || STATUS_COLORS.idle;
 
   return (
-    <TooltipProvider delayDuration={200}>
-      <div className="min-h-screen bg-background">
-        <Header health={health} theme={theme} onToggleTheme={toggleTheme} />
+    <div style={styles.page}>
+      <header style={styles.header}>
+        <h1 style={styles.title}>IncidentLens</h1>
+        <p style={styles.subtitle}>
+          Production RAG pipeline — stage-by-stage view
+        </p>
+      </header>
 
-        <main className="mx-auto w-full max-w-7xl px-4 pb-16 pt-6 sm:px-6">
-          {isOffline ? <OfflineNotice className="mb-6" message={health.error?.message} /> : null}
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <input
+          type="text"
+          placeholder="Ask an incident question…"
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          style={styles.input}
+        />
+        <button type="submit" disabled={loading} style={styles.button}>
+          {loading ? "Running pipeline…" : "Run pipeline"}
+        </button>
+      </form>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <TabsList>
-                {TABS.map(({ value, label, icon: Icon }) => (
-                  <TabsTrigger key={value} value={value}>
-                    <Icon className="h-3.5 w-3.5" />
-                    {label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+      {error && (
+        <div style={styles.errorBox}>
+          ⚠️ {escapeHtml(error)}
+          <br />
+          Make sure the API server is running: <code>python api/server.py</code>
+        </div>
+      )}
 
-              {isOffline ? (
-                <Badge variant="destructive">
-                  <WifiOff className="h-3 w-3" />
-                  offline
-                </Badge>
-              ) : null}
-            </div>
-
-            {/* ------------------------------ Ask ------------------------------ */}
-            <TabsContent value="ask" className="space-y-5">
-              <QueryPanel
-                question={question}
-                onQuestionChange={setQuestion}
-                threadId={threadId}
-                onThreadIdChange={setThreadId}
-                useStream={useStream}
-                onUseStreamChange={setUseStream}
-                onSubmit={handleAsk}
-                onCancel={handleCancel}
-                isRunning={isRunning}
-                disabled={isOffline}
-                disabledReason={offlineNote}
-              />
-
-              {askError ? (
-                <div className="rounded-xl border border-destructive/40 bg-destructive/10 p-4">
-                  <p className="text-sm font-medium text-destructive">Request failed</p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    {describeError(askError)}
-                  </p>
-                </div>
-              ) : null}
-
-              {/*
-                Two columns on wide screens: the trace stays beside the answer it produced.
-                `lg:grid-cols-[minmax(0,20rem)_minmax(0,1fr)]` keeps the trace readable
-                without letting it dominate the answer.
-              */}
-              <div
-                className={cn(
-                  "grid gap-5",
-                  "lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:items-start"
-                )}
-              >
-                <div className="rounded-xl border border-border bg-card/50 p-5">
-                  <AgentTrace entries={traceEntries} isStreaming={isRunning} error={askError} />
-                </div>
-
-                <AnswerCard result={result} isStreaming={isRunning} streamPartial={streamPartial} />
-              </div>
-            </TabsContent>
-
-            {/* --------------------------- Evaluate ---------------------------- */}
-            <TabsContent value="evaluate">
-              {isOffline ? (
-                <OfflineNotice className="mb-5" message={health.error?.message} />
-              ) : null}
-              <EvaluationPanel
-                limit={evalLimit}
-                onLimitChange={setEvalLimit}
-                onRun={handleEvaluate}
-                isRunning={isEvaluating}
-                result={evalResult}
-                disabled={isOffline}
-              />
-            </TabsContent>
-
-            {/* ---------------------------- Metrics ---------------------------- */}
-            <TabsContent value="metrics">
-              {isOffline ? (
-                <OfflineNotice className="mb-5" message={health.error?.message} />
-              ) : null}
-              <MetricsPanel
-                samples={parsedMetrics.samples}
-                raw={metricsRaw}
-                isLoading={isLoadingMetrics}
-                error={metricsError}
-                onRefresh={loadMetrics}
-              />
-            </TabsContent>
-
-            {/* ----------------------------- Health ---------------------------- */}
-            <TabsContent value="health">
-              <HealthPanel health={health} />
-            </TabsContent>
-          </Tabs>
-        </main>
-
-        <footer className="border-t border-border">
-          <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-x-3 gap-y-1 px-4 py-5 text-[11px] text-muted-foreground sm:px-6">
-            <span>IncidentLens</span>
-            <span className="text-muted-foreground/50">|</span>
-            <span>
-              Talking to <span className="font-mono">{API_BASE}</span>
-            </span>
-            <span className="text-muted-foreground/50">|</span>
-            <span>Blocked queries cost zero LLM calls.</span>
+      {response && (
+        <section style={styles.results}>
+          <div style={styles.diagnosis}>
+            <strong>Diagnosis:</strong> {escapeHtml(response.diagnosis)}
           </div>
-        </footer>
 
-        <Toaster theme={theme} />
-      </div>
-    </TooltipProvider>
+          {response.answer && (
+            <div style={styles.answerCard}>
+              <h3 style={styles.answerTitle}>Answer</h3>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: escapeHtml(response.answer).replace(/\n/g, "<br />"),
+                }}
+              />
+              {response.citations.length > 0 && (
+                <div style={styles.citations}>
+                  <strong>Sources:</strong> {response.citations.join(", ")}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div style={styles.pipeline}>
+            <h3 style={styles.pipelineTitle}>Pipeline stages</h3>
+            {STAGES.map((stage) => {
+              const result = response.stages.find((s) => s.name === stage.label);
+              const status = result ? result.status : "idle";
+              return (
+                <div key={stage.id} style={styles.stageCard(status)}>
+                  <div style={styles.stageHeader}>
+                    <span
+                      style={{
+                        ...styles.stageBadge,
+                        backgroundColor: stageColor(status),
+                      }}
+                    >
+                      {status === "running" ? "⟳" : status === "ok" ? "✓" : status === "skipped" ? "–" : "✕"}
+                    </span>
+                    <div>
+                      <div style={styles.stageName}>{stage.label}</div>
+                      <div style={styles.stageSub}>{stage.subtitle}</div>
+                    </div>
+                  </div>
+                  {result && result.detail && (
+                    <div style={styles.stageDetail}>
+                      {escapeHtml(result.detail)}
+                    </div>
+                  )}
+                  {result && result.data && (
+                    <div style={styles.stageData}>
+                      {renderStageData(stage.id, result.data)}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
+    </div>
   );
 }
+
+function renderStageData(stageId, data) {
+  switch (stageId) {
+    case 1:
+      return (
+        <ul style={styles.metaList}>
+          <li>Documents: {data.documents}</li>
+          <li>Organisations: {data.organisations}</li>
+        </ul>
+      );
+    case 2:
+      return (
+        <ul style={styles.metaList}>
+          <li>Chunks: {data.chunks}</li>
+          <li>Size / overlap: {data.size_chars} / {data.overlap_chars} chars</li>
+        </ul>
+      );
+    case 3:
+    case 4:
+      return (
+        <ul style={styles.metaList}>
+          <li>Dimension: {data.dimension}</li>
+          <li>Query vector: {data.query_vector_len} floats</li>
+          <li>Index vectors: {data.index_vectors}</li>
+        </ul>
+      );
+    case 5: {
+      const dense = data.dense || [];
+      const bm25 = data.bm25 || [];
+      return (
+        <div style={styles.comparePanel}>
+          <div style={styles.panel}>
+            <div style={styles.panelTitle}>Dense (before rerank)</div>
+            <div style={styles.panelMeta}>
+              {dense.length} chunks · {data.dense_latency_ms} ms
+            </div>
+            {dense.map((h, i) => (
+              <div key={i} style={styles.chip}>
+                {h.document_id} · sim {h.similarity}
+              </div>
+            ))}
+          </div>
+          <div style={styles.panel}>
+            <div style={styles.panelTitle}>BM25 (before rerank)</div>
+            <div style={styles.panelMeta}>
+              {bm25.length} chunks · {data.bm25_latency_ms} ms
+            </div>
+            {bm25.map((h, i) => (
+              <div key={i} style={styles.chip}>
+                {h.document_id} · score {h.similarity}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    case 6: {
+      const fused = data.fused || [];
+      return (
+        <div>
+          <div style={styles.panelMeta}>
+            {fused.length} fused chunks · {data.latency_ms} ms · sources:{" "}
+            {JSON.stringify(data.contributions)}
+          </div>
+          <div style={styles.chipRow}>
+            {fused.map((h, i) => (
+              <div key={i} style={styles.chip}>
+                {h.document_id} · sim {h.similarity}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    case 7: {
+      const reranked = data.reranked || [];
+      return (
+        <div>
+          <div style={styles.panelMeta}>
+            {reranked.length} reranked chunks · {data.latency_ms} ms ·
+            {data.candidates} candidates
+          </div>
+          <div style={styles.chipRow}>
+            {reranked.map((h, i) => (
+              <div key={i} style={styles.chip}>
+                {h.document_id} · sim {h.similarity}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+    case 9:
+      return (
+        <ul style={styles.metaList}>
+          <li>
+            Latency: {data.latency_ms} ms · Tokens: {data.tokens}
+          </li>
+          <li>
+            Blocked: {String(data.blocked)} {data.block_reason ? `— ${data.block_reason}` : ""}
+          </li>
+        </ul>
+      );
+    case 10:
+      return (
+        <ul style={styles.metaList}>
+          <li>
+            Faithfulness:{data.faithfulness === null ? " n/a" : ` ${data.faithfulness.toFixed(3)}`}
+          </li>
+          <li>
+            Answer relevance:{data.answer_relevance === null ? " n/a" : ` ${data.answer_relevance.toFixed(3)}`}
+          </li>
+        </ul>
+      );
+    default:
+      return null;
+  }
+}
+
+const styles = {
+  page: {
+    fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+    maxWidth: 900,
+    margin: "0 auto",
+    padding: 24,
+    color: "#1e293b",
+    lineHeight: 1.5,
+  },
+  header: {
+    textAlign: "center",
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 32,
+    margin: 0,
+    color: "#0f172a",
+  },
+  subtitle: {
+    color: "#64748b",
+    marginTop: 8,
+  },
+  form: {
+    display: "flex",
+    gap: 12,
+    marginBottom: 32,
+  },
+  input: {
+    flex: 1,
+    padding: "10px 14px",
+    fontSize: 16,
+    border: "1px solid #cbd5e1",
+    borderRadius: 8,
+    outline: "none",
+  },
+  button: {
+    padding: "10px 24px",
+    fontSize: 16,
+    backgroundColor: "#0f172a",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    cursor: "pointer",
+    fontWeight: 600,
+  },
+  errorBox: {
+    backgroundColor: "#fef2f2",
+    border: "1px solid #fecaca",
+    color: "#991b1b",
+    padding: 14,
+    borderRadius: 8,
+    marginBottom: 24,
+  },
+  results: {},
+  diagnosis: {
+    backgroundColor: "#eff6ff",
+    border: "1px solid #bfdbfe",
+    color: "#1e3a8a",
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 20,
+    fontSize: 15,
+  },
+  answerCard: {
+    backgroundColor: "#f8fafc",
+    border: "1px solid #e2e8f0",
+    borderRadius: 10,
+    padding: 16,
+    marginBottom: 24,
+  },
+  answerTitle: {
+    margin: "0 0 8px 0",
+    fontSize: 18,
+    color: "#0f172a",
+  },
+  citations: {
+    marginTop: 10,
+    fontSize: 13,
+    color: "#475569",
+  },
+  pipeline: {},
+  pipelineTitle: {
+    margin: "0 0 12px 0",
+    fontSize: 18,
+    color: "#0f172a",
+  },
+  stageCard: (status) => ({
+    border: `1px solid ${status === "error" ? "#fca5a5" : status === "skipped" ? "#fcd34d" : "#e2e8f0"}`,
+    borderLeft: `4px solid ${stageColor(status)}`,
+    borderRadius: 8,
+    padding: 14,
+    marginBottom: 10,
+    backgroundColor:
+      status === "ok" ? "#f0fdf4" : status === "skipped" ? "#fffbeb" : "#ffffff",
+  }),
+  stageHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 6,
+  },
+  stageBadge: {
+    width: 26,
+    height: 26,
+    borderRadius: 6,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#fff",
+    fontWeight: 700,
+    fontSize: 14,
+    flexShrink: 0,
+  },
+  stageName: {
+    fontWeight: 700,
+    fontSize: 15,
+    color: "#0f172a",
+  },
+  stageSub: {
+    fontSize: 12,
+    color: "#64748b",
+  },
+  stageDetail: {
+    fontSize: 13,
+    color: "#475569",
+    marginBottom: 8,
+  },
+  stageData: {
+    marginTop: 8,
+  },
+  metaList: {
+    margin: 0,
+    paddingLeft: 18,
+    fontSize: 13,
+    color: "#475569",
+  },
+  comparePanel: {
+    display: "flex",
+    gap: 12,
+    marginTop: 8,
+  },
+  panel: {
+    flex: 1,
+    border: "1px solid #e2e8f0",
+    borderRadius: 6,
+    padding: 10,
+    backgroundColor: "#ffffff",
+  },
+  panelTitle: {
+    fontWeight: 700,
+    fontSize: 13,
+    color: "#0f172a",
+    marginBottom: 4,
+  },
+  panelMeta: {
+    fontSize: 12,
+    color: "#64748b",
+    marginBottom: 6,
+  },
+  chip: {
+    display: "inline-block",
+    backgroundColor: "#e2e8f0",
+    color: "#334155",
+    padding: "4px 8px",
+    borderRadius: 4,
+    fontSize: 12,
+    marginRight: 6,
+    marginBottom: 4,
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+  },
+  chipRow: {
+    marginTop: 8,
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+};

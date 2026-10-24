@@ -64,10 +64,11 @@ IncidentLens indexes **real, publicly available technical disaster reports** —
 | Field | Detail |
 |---|---|
 | **File** | `data/eval_golden_dataset.json` |
-| **Contents** | 20 curated question-answer pairs with ground-truth citations |
-| **Purpose** | Ragas 4-metric evaluation harness (faithfulness, precision, relevance, recall) |
-| **Coverage** | At least 5 questions per post-mortem document |
+| **Contents** | 10 curated question-answer pairs with ground-truth citations |
+| **Purpose** | 4-metric evaluation harness (faithfulness, answer relevance, context precision, context recall) |
+| **Coverage** | CrowdStrike 3, Cloudflare 3, GitHub 2, AWS Kinesis 2 |
 | **Built In** | Phase 4 |
+| **Planned** | Expand to 25 to 40 questions after the corpus change. See [14_pipeline_plan.md](./14_pipeline_plan.md), Phase 1. |
 
 ### Example Entry Format
 ```json

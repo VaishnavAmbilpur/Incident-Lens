@@ -1,29 +1,60 @@
-# 1. Core Framework & Agent Engine
-langchain>=0.3.0
-langchain-core>=0.3.0
-langchain-community>=0.3.0
-langgraph>=0.2.0
+# =============================================================================
+# IncidentLens — Python dependencies
+#
+# Every version is PINNED with "==". A version range such as ">=" gives a
+# different result on a different day. A reviewer must get the same result as
+# this machine, so the versions are exact.
+#
+# These are the versions that are installed and verified in ./venv.
+# Verify with:  .\venv\Scripts\python.exe -m pip list
+# =============================================================================
 
-# 2. 100% Free Cloud LLM Providers
-langchain-groq>=0.2.0
-langchain-openai>=0.2.0
-openai>=1.50.0
+# --- Core framework and agent engine -----------------------------------------
+langchain==1.4.4
+langchain-core==1.6.9
+langchain-community==0.4.2
+langgraph==1.2.14
 
-# 3. Vector Database & Keyword Search
-langchain-chroma>=0.1.4
-chromadb>=0.5.0
-rank-bm25>=0.2.2
+# --- Model providers --------------------------------------------------------
+# Groq: the primary provider. OpenRouter: the fallback provider.
+langchain-groq==1.1.3
+langchain-openai==1.1.9
+openai==1.109.1
 
-# 4. Document Ingestion & Environment
-pypdf>=5.0.0
-python-dotenv>=1.0.0
-tiktoken>=0.7.0
+# --- Vector store and keyword search ----------------------------------------
+chromadb==1.5.9
+langchain-chroma==1.1.0
+rank-bm25==0.2.2
 
-# 5. Observability & Tracing
-langfuse>=2.0.0
+# --- Local models -----------------------------------------------------------
+# The embedding model and the cross-encoder reranker run on the CPU.
+# They need no API key and they have no cost.
+sentence-transformers==6.1.0
 
-# 6. Production API & Testing
-fastapi>=0.115.0
-uvicorn>=0.30.0
-pytest>=8.0.0
-requests>=2.31.0
+# --- Ingestion and text processing ------------------------------------------
+pypdf==6.20.0
+tiktoken==0.14.0
+beautifulsoup4==4.15.0
+lxml==6.1.3
+
+# --- Graph reasoning --------------------------------------------------------
+networkx==3.7
+
+# --- Observability and evaluation -------------------------------------------
+ragas==0.4.3
+langfuse==4.17.0
+langsmith==0.14.7
+
+# --- API service ------------------------------------------------------------
+fastapi==0.143.0
+uvicorn==0.54.0
+
+# --- Support ----------------------------------------------------------------
+python-dotenv==1.2.4
+requests==2.34.2
+httpx==0.28.1
+numpy==2.5.4
+pandas==3.0.6
+
+# --- Testing ----------------------------------------------------------------
+pytest==9.1.1
